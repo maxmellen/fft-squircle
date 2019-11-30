@@ -13,7 +13,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  fft = new p5.FFT(0);
+  fft = new p5.FFT();
   colorMode(HSB);
   angleMode(DEGREES);
   rectMode(CENTER);
@@ -31,14 +31,15 @@ function draw() {
     const f = spectrum[round(a * 1024 / 360) % 360] / 255;
     const x = cos(a) * S / 4;
     const y = sin(a) * S / 4;
-    const s = S / 2 / root2 * pow(f, 3);
+    const s = S / root2 * pow(f, 3);
     const h = a;
+    const o = 1 - pow(f, 1 / 3);
 
     push();
     {
       translate(x, y);
       rotate(a + d);
-      stroke((360 + h - d) % 360, 100, 100, 5 * (1 - pow(f, 1/3)) / 6 + 1 / 6);
+      stroke((360 + h - d) % 360, 100, 100, o);
       square(0, 0, s);
     }
     pop();
