@@ -44,6 +44,9 @@ function draw() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  input && input.remove();
+  input = createFileInput(handleFile);
+  input.position(0, windowHeight);
 }
 
 function mousePressed() {
