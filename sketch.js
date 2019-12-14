@@ -1,31 +1,29 @@
 "use strict";
 
 let d = 0;
-let mic;
+let sound;
 let fft;
 let spectrum;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  const c = createCanvas(windowWidth, windowHeight);
+
   angleMode(DEGREES);
   rectMode(CENTER);
   colorMode(HSB);
   noFill();
 
-  mic = new p5.AudioIn();
-  mic.start();
   fft = new p5.FFT();
-  fft.setInput(mic);
+  c.drop(handleDrop);
 }
 
 function draw() {
   const S = min(width, height);
-  strokeWeight(S / 360);
   background(0);
   spectrum = fft.analyze();
   translate(width / 2, height / 2);
-  for (let a = 0; a < 360 * 6; a++) {
-    const f = spectrum[round(a * 1024 / 360) % 360] / 255;
+  for (let a = 0, A = 360 * 3; a < A; a++) {
+    const f = spectrum[round(a * 1024 / A) % 40] / 255;
     const x = cos(a) * S / 4;
     const y = sin(a) * S / 4;
     const s = S / sqrt(2) * pow(f, 3);
@@ -46,7 +44,21 @@ function windowResized() {
 }
 
 function mousePressed() {
-  if (getAudioContext().state !== 'running') {
+  if (getAudioContext().state !== "running") {
     getAudioContext().resume();
   }
+}
+
+function handleDrop(e) {
+  if (!e.file) return;
+  if (!e.type) return;
+  if (e.type !== "audio") return;
+
+  loadSound(e.file, loaded => {
+    if (sound && sound.isPlaying()) sound.stop();
+    sound = loaded;
+    sound.play();
+  }, err => {
+    console.warn("Error loading sound file:", err);
+  });
 }
