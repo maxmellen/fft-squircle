@@ -1,6 +1,7 @@
 "use strict";
 
 let d = 0;
+let input;
 let sound;
 let fft;
 let spectrum;
@@ -13,8 +14,10 @@ function setup() {
   colorMode(HSB);
   noFill();
 
+  input = createFileInput(handleFile);
+  input.position(0, windowHeight);
   fft = new p5.FFT();
-  c.drop(handleDrop);
+  c.drop(handleFile);
 }
 
 function draw() {
@@ -49,7 +52,7 @@ function mousePressed() {
   }
 }
 
-function handleDrop(e) {
+function handleFile(e) {
   if (!e.file) return;
   if (!e.type) return;
   if (e.type !== "audio") return;
