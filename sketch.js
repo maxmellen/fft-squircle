@@ -1,24 +1,21 @@
 "use strict";
 
-let root2;
-
 let d = 0;
-let sound;
+let mic;
 let fft;
 let spectrum;
 
-function preload() {
-  sound = loadSound("./track.mp3");
-}
-
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  fft = new p5.FFT();
-  colorMode(HSB);
   angleMode(DEGREES);
   rectMode(CENTER);
+  colorMode(HSB);
   noFill();
-  root2 = sqrt(2);
+
+  mic = new p5.AudioIn();
+  mic.start();
+  fft = new p5.FFT();
+  fft.setInput(mic);
 }
 
 function draw() {
@@ -31,20 +28,17 @@ function draw() {
     const f = spectrum[round(a * 1024 / 360) % 360] / 255;
     const x = cos(a) * S / 4;
     const y = sin(a) * S / 4;
-    const s = S / root2 * pow(f, 3);
-    const h = a;
-    const o = 1 - pow(f, 1 / 3);
+    const s = S / sqrt(2) * pow(f, 3);
+    const o = 1 - pow(f, 1 / 2);
 
     push();
-    {
-      translate(x, y);
-      rotate(a + d);
-      stroke((360 + h - d) % 360, 100, 100, o);
-      square(0, 0, s);
-    }
+    translate(x, y);
+    rotate(a + d);
+    stroke((a + 360 - d) % 360, 100, 100, o);
+    square(0, 0, s);
     pop();
   }
-  d = d < 360 ? d + 1 : 0;
+  d = d + 1 < 360 ? d + 1 : 0;
 }
 
 function windowResized() {
@@ -52,14 +46,7 @@ function windowResized() {
 }
 
 function mousePressed() {
-  console.log(spectrum);
-  togglePlay();
-}
-
-function togglePlay() {
-  if (sound.isPlaying()) {
-    sound.pause();
-  } else {
-    sound.loop();
+  if (getAudioContext().state !== 'running') {
+    getAudioContext().resume();
   }
 }
