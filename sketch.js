@@ -3,6 +3,7 @@
 let d = 0;
 let input;
 let sound;
+let bins = 512;
 let fft;
 let spectrum;
 
@@ -16,7 +17,7 @@ function setup() {
 
   input = createFileInput(handleFile);
   input.position(0, windowHeight);
-  fft = new p5.FFT();
+  fft = new p5.FFT(0.8, bins);
   c.drop(handleFile);
 }
 
@@ -26,7 +27,7 @@ function draw() {
   spectrum = fft.analyze();
   translate(width / 2, height / 2);
   for (let a = 0, A = 360 * 3; a < A; a++) {
-    const f = spectrum[round(a * 1024 / A) % 40] / 255;
+    const f = spectrum[round(a * bins / A) % 40 + 32] / 255;
     const x = cos(a) * S / 4;
     const y = sin(a) * S / 4;
     const s = S / sqrt(2) * pow(f, 3);
