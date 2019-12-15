@@ -6,6 +6,7 @@ let sound;
 let bins = 512;
 let fft;
 let spectrum;
+let debug = false;
 
 function setup() {
   const c = createCanvas(windowWidth, windowHeight);
@@ -41,6 +42,20 @@ function draw() {
     pop();
   }
   d = d + 1 < 360 ? d + 1 : 0;
+
+  if (debug) {
+    translate(-width / 2, height / 2);
+    stroke(120, 100, 100, 1);
+    for (let x = 0; x < width; x++) {
+      const y = -spectrum[round(x / width * bins)] / 255 * height;
+      point(x, y);
+    }
+    stroke(60, 100, 100, 1);
+    const x1 = 32 / bins * width;
+    const x2 = 72 / bins * width;
+    line(x1, 0, x1, -height);
+    line(x2, 0, x2, -height);
+  }
 }
 
 function windowResized() {
@@ -68,4 +83,10 @@ function handleFile(e) {
   }, err => {
     console.warn("Error loading sound file:", err);
   });
+}
+
+function keyPressed() {
+  if (key === "d") {
+    debug = !debug;
+  }
 }
