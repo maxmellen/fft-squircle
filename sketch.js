@@ -9,7 +9,7 @@ let spectrum;
 let debug = false;
 
 function setup() {
-  const c = createCanvas(windowWidth, windowHeight);
+  const c = createCanvas(windowWidth, windowHeight, WEBGL);
 
   angleMode(DEGREES);
   rectMode(CENTER);
@@ -26,7 +26,6 @@ function draw() {
   const S = min(width, height);
   background(0);
   spectrum = fft.analyze();
-  translate(width / 2, height / 2);
   for (let a = 0, A = 360 * 3; a < A; a++) {
     const f = spectrum[round(a * bins / A) % 40 + 32] / 255;
     const x = cos(a) * S / 4;
